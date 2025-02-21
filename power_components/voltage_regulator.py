@@ -17,7 +17,7 @@ def make_ssu(
     temperature: Variable,
     voltage_rating: Variable,
     threshold: tuple,
-    wiring: tuple, 
+    wiring_parameters: tuple, 
     power: System,
 ) -> System:
 
@@ -43,13 +43,6 @@ def make_ssu(
         age_rate = Variable(
             name="age_rate",
             value=aging_rate
-        )
-
-        wiring = make_wiring(
-            "wiring", 
-            clock, 
-            wiring[0],
-            wiring[1]
         )
 
         @make_function(age_rate)
@@ -96,16 +89,21 @@ def make_ssu(
             value=threshold[1]
         )
 
+        wiring = make_wiring(
+            "wiring", 
+            clock, 
+            wiring_parameters
+        )
+
         @make_function(voltage)
         def calc_ssu_voltage(
             thresh=function_threshold,
             v=voltage_rating,
             function=regulator_functionality,
             wire=wiring.transfer_electricity, 
-            power_thresh_req = power_threshold, 
-            power_in=power.generate_power,
+
         ):
-            if function > thresh and wire == 1 and power_in > power_thresh_req: 
+            if function > thresh and wire == 1: 
                 return v
             else: 
                 return 0.0
@@ -130,14 +128,13 @@ def make_ssu(
 def make_ddcu(
     name: str,
     clock: System,
-    aging_rate: float,
+    aging_rate_parameters: tuple,
     operating_temperature: tuple,
     surviving_temperature: tuple,
-    voltage_rating: Variable,
     temperature: Variable,
-    threshold: tuple,
-    wiring: tuple, 
-    connection: System,
+    voltage_rating: Variable,
+    wiring_parameters: tuple, 
+    connecting_func: System,
 ) -> System:
 
     with System(name=name) as ddcu:
@@ -161,7 +158,12 @@ def make_ddcu(
 
         age_rate = Variable(
             name="age_rate",
-            value=aging_rate
+            value=aging_rate_parameters[0]
+        )
+
+        aging_rate = Variable(
+            name="aging_rate",
+            value=aging_rate_parameters[0]
         )
 
         @make_function(age_rate)
@@ -188,17 +190,35 @@ def make_ddcu(
             Ed=1.0
         )
 
-        wiring = make_connection_wiring(
+        wiring = make_wiring(
             "wiring", 
             clock, 
-            wiring[0],
-            (wiring[1], wiring[2]),
-            connection
+            wiring_parameters,
         )
 
+        threshold = Variable(
+            name="threshold", 
+            value=aging_rate_parameters[1]
+        )
+
+        regulator_functionality_inputs = (
+            hardware, 
+            threshold
+        ) 
+
+        def make_regulator_functionality(
+            hd=hardware,
+            th=threshold,
+        ): 
+            if hd < th: 
+                return 0 
+            else: 
+                return 1
+
         regulator_functionality = make_functionality(
-            hardware,
-            name="regulate_voltage"
+            *regulator_functionality_inputs,
+            name="regulate_voltage",
+            functionality_func=make_regulator_functionality
         )
 
         voltage = Variable (
@@ -206,42 +226,15 @@ def make_ddcu(
             value=voltage_rating.value, 
         )
 
-        function_threshold = Variable(
-            name="function_threshold", 
-            value=threshold[0]
-        )
-
-        voltage_threshold = Variable(
-            name="power_threshold", 
-            value=threshold[1]
-        )
-
         @make_function(voltage)
         def calc_ddcu_voltage(
-            thresh=function_threshold,
             v=voltage_rating,
             function=regulator_functionality,
             wire=wiring.transfer_electricity, 
-            voltage_thresh_req = voltage_threshold, 
-            voltage_in=connection.voltage,
+            connection=connecting_func.functionality,
         ):
-            if function > thresh and wire == 1 and voltage_in > voltage_thresh_req: 
+            if function == 1 and wire == 1 and connection == 1:
                 return v
-            else: 
-                return 0.0
-            
-        heat = Variable(
-            name="heat",
-            value=0.0
-        )
-
-        @make_function(heat)
-        def calc_heat(
-            voltage_thresh_req = voltage_threshold, 
-            voltage_in=connection.voltage,
-        ):
-            if voltage_in > voltage_thresh_req: 
-                return (voltage_in - voltage_thresh_req)
             else: 
                 return 0.0
    

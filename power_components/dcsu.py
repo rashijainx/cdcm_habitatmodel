@@ -1,9 +1,7 @@
 from cdcm import *
 from cdcm_abstractions import *
 
-import random
-
-from command_and_control_components import *
+from .wiring import * 
 
 __all__ = ["make_dcsu"]
 
@@ -18,6 +16,7 @@ def make_dcsu(
     power_generation: System,
     power_demands: Variable,
     number_of_batteries: Parameter,
+    wiring_aging_parameters: tuple,
 ) -> System:
 
     with System(name=name) as dcsu:
@@ -39,11 +38,18 @@ def make_dcsu(
             Ed=1.0
         )
     
+        wiring = make_wiring(
+            "wiring",
+            clock, 
+            wiring_aging_parameters,
+        )
+
         dcsu_functionality_inputs = (
             hardware,
             tolerance,
             power_generation.ssu.regulate_voltage,
-            voltage_rating
+            voltage_rating,
+            wiring.transfer_electricity,
         )
 
         def make_dcsu_functionality(
@@ -51,20 +57,14 @@ def make_dcsu(
             tol=tolerance,
             sv=power_generation.ssu.regulate_voltage,
             vr=voltage_rating,
+            w=wiring.transfer_electricity,
         ): 
-            # if hd < tol:
-            #     return 0
-            # else: 
-            #     if sv == vr:
-            #         return 1.0  
-            #     else: 
-            #         return 0.0
             return 1.0
 
         dcsu_functionality = make_functionality(
-            *dcsu_functionality_inputs,
-            name="dcsu_functionality",
-            functionality_func=make_dcsu_functionality
+            # name="dcsu_functionality",
+            # *dcsu_functionality_inputs,
+            function=make_dcsu_functionality
         )
 
         operational_mode = Variable(

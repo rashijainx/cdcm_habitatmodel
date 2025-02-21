@@ -85,8 +85,7 @@ def make_switch(
 def make_integrated_switch(
     name: str,
     clock: System,
-    switch_aging_rate: float,
-    fuse_aging_rate: float,
+    aging_rates: tuple,
     fuse_voltage_in: Variable,
     power_consumer_spec: tuple, 
 ) -> System:
@@ -95,7 +94,7 @@ def make_integrated_switch(
 
         hardware = make_component(
             name="hardware",
-            health_damage_rate=switch_aging_rate,
+            health_damage_rate=aging_rates[0],
             dt=clock.dt,
             Ed=1.0
         )
@@ -103,7 +102,7 @@ def make_integrated_switch(
         fuse = make_fuse(
             "fuse", 
             clock,
-            fuse_aging_rate,
+            aging_rates[1],
             fuse_voltage_in,
             power_consumer_spec
         )
