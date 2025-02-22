@@ -10,4 +10,4 @@ Date:
 """
 
 
-from ..power_test_scripts.sensor import *
+from .sensor import *

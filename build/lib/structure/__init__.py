@@ -10,4 +10,5 @@ Date:
 """
 
 
-from ..power_test_scripts.sensor import *
+from .exterior_variables import *
+from .get_surface import * 
