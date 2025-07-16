@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# python
+*.py[cod]
+*__pycache__*
+
+# pytest
+.pytest_cache/
+*.egg-info/
+
+# save formats
+*.h5
+*.hdf5
+
+# mypy
+.mypy_cache/
+
+# Video files
+*.mp4
+
+# VSCode
+.vscode/
+.env
+/**/.ipynb_checkpoints/
+/**/.doctrees/
+/**/lib/
+
+# HTML
+*.html
