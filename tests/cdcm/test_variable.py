@@ -1,7 +1,7 @@
 """Tests quantities using pytest.
 
 Author:
-    Roman Ibrahimov
+    Rashi Jain
 
 Date:
     3/11/2022
