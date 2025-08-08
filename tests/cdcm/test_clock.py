@@ -1,11 +1,10 @@
 """Test the clock.
 
 Author:
-    Ilias Bilionis
+    Rashi Jain
 
 Date:
-    3/15/2022
-    4/16/2022
+    2023-10-15
 """
 
 
