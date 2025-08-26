@@ -9,12 +9,14 @@ from cdcm_utils import *
 # Plot Libraries 
 import matplotlib.pyplot as plt
 
+
 def make_battery(
     name: str, 
     clock: System,
     status: int, 
     initial_charge: float, 
-    discharge_rate: float,  
+    discharge_rate: float,
+    self_discharge_rate: float, 
 ): 
     with System (name=name) as battery: 
 
@@ -33,17 +35,23 @@ def make_battery(
             value=initial_charge
         )
 
+        self_discharge = Variable(
+            name="self_discharge_rate", 
+            value=self_discharge_rate
+        )
+
         @make_function(charge)
         def calc_battery_charge(
             C=charge, 
             s=status,
             dr=discharge_rate, 
-            dt=clock.dt
+            dt=clock.dt,
+            k_self=self_discharge, 
         ): 
             if s == 1:  # Battery is discharging
                 return max(0, C - dr*dt)
             else:  # Battery is not discharging
-                return C
+                return C - k_self * dt
         
         return battery
 
@@ -61,6 +69,7 @@ if __name__ == "__main__":
         status = 1
         initial_charge = 100.0
         discharge_rate = 0.1
+        self_discharge_rate = 0.001
 
         battery = make_battery(
             "battery",
@@ -68,6 +77,7 @@ if __name__ == "__main__":
             status,
             initial_charge,
             discharge_rate,
+            self_discharge_rate,
         ) 
 
 
