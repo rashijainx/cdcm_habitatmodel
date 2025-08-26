@@ -17,8 +17,28 @@ def make_battery(
     initial_charge: float, 
     discharge_rate: float,
     self_discharge_rate: float, 
+    age_rate: float, 
+    health_threshold: float,
+    damage_threshold: float,
 ): 
     with System (name=name) as battery: 
+
+        age_rate = Variable(
+            name="age_rate", 
+            value=age_rate
+        )
+
+        hardware = make_component(
+            name="hardware",
+            aging_rate=age_rate,
+            dt=clock.dt,
+            Ed=damage_threshold
+        )
+
+        health_threshold = Variable(
+            name="health_threshold", 
+            value=health_threshold
+        )
 
         discharge_rate = Variable(
             name="discharge_rate", 
@@ -46,13 +66,35 @@ def make_battery(
             s=status,
             dr=discharge_rate, 
             dt=clock.dt,
-            k_self=self_discharge, 
+            k_self=self_discharge,
         ): 
             if s == 1:  # Battery is discharging
                 return max(0, C - dr*dt)
             else:  # Battery is not discharging
                 return C - k_self * dt
         
+        def fn_battery_functionality(
+            hardware,
+            health_threshold,
+            charge,
+        ) -> float:
+            if hardware < health_threshold:
+                return charge
+            else:
+                return 0.0
+            
+        battery_functinality_inputs = (
+            hardware,
+            health_threshold,
+            charge,
+        )
+
+        # battery_functionality = make_functionality(
+        #     *battery_functinality_inputs,
+        #     functionality_func=fn_battery_functionality, 
+        #     name="provide_power",
+        # ) 
+
         return battery
 
 
@@ -70,6 +112,9 @@ if __name__ == "__main__":
         initial_charge = 100.0
         discharge_rate = 0.1
         self_discharge_rate = 0.001
+        aging_rate = 0.1/(24*365)
+        health_threshold = 0.5
+        damage_threshold = 0.015
 
         battery = make_battery(
             "battery",
@@ -78,6 +123,9 @@ if __name__ == "__main__":
             initial_charge,
             discharge_rate,
             self_discharge_rate,
+            aging_rate,
+            health_threshold,
+            damage_threshold,
         ) 
 
 
@@ -113,7 +161,7 @@ if __name__ == "__main__":
 
     _map = {
         "t": "/system/clock/t",
-
+        "health": "/system/battery/hardware/functionality",
         "charge": "/system/battery/charge",
         }
 
@@ -121,8 +169,11 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(nrows=2)
 
-    axs[0].plot(data["t"], data["charge"])
-    axs[0].set(ylabel="Charge")
+    axs[0].plot(data["t"], data["health"])
+    axs[0].set(ylabel="Health")
+
+    axs[1].plot(data["t"], data["charge"])
+    axs[1].set(ylabel="Charge")
 
 
     plt.show()
