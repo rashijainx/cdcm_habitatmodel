@@ -78,7 +78,7 @@ def make_battery(
             health_threshold,
             charge,
         ) -> float:
-            if hardware < health_threshold:
+            if hardware > health_threshold:
                 return charge
             else:
                 return 0.0
@@ -89,11 +89,11 @@ def make_battery(
             charge,
         )
 
-        # battery_functionality = make_functionality(
-        #     *battery_functinality_inputs,
-        #     functionality_func=fn_battery_functionality, 
-        #     name="provide_power",
-        # ) 
+        battery_functionality = make_functionality(
+            *battery_functinality_inputs,
+            functionality_func=fn_battery_functionality, 
+            name="provide_power",
+        ) 
 
         return battery
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         initial_charge = 100.0
         discharge_rate = 0.1
         self_discharge_rate = 0.001
-        aging_rate = 0.1/(24*365)
+        aging_rate = 10/(24*365)
         health_threshold = 0.5
         damage_threshold = 0.015
 
@@ -163,17 +163,21 @@ if __name__ == "__main__":
         "t": "/system/clock/t",
         "health": "/system/battery/hardware/functionality",
         "charge": "/system/battery/charge",
+        "charge_output": "/system/battery/provide_power"
         }
 
     data = extract_data_from_saver(saver, _map)
 
-    fig, axs = plt.subplots(nrows=2)
+    fig, axs = plt.subplots(nrows=3)
 
     axs[0].plot(data["t"], data["health"])
     axs[0].set(ylabel="Health")
 
     axs[1].plot(data["t"], data["charge"])
     axs[1].set(ylabel="Charge")
+
+    axs[2].plot(data["t"], data["charge_output"])
+    axs[2].set(ylabel="Charge Output")
 
 
     plt.show()
