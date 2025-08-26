@@ -1,4 +1,4 @@
-# batteries.py — CDCM battery builders
+# energy_storage.py — CDCM battery builders
 # Exports:
 #   - make_battery_base
 #   - make_nonrechargeable_battery

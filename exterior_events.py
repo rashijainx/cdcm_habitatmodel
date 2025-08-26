@@ -1,12 +1,3 @@
-"""Events external to the component models
-
-Author:
-    R Murali Krishnan
-    
-Date:
-    10/04/2023
-    
-"""
 
 
 __all__ = ["Meteorite", "make_meteorite_event"]
