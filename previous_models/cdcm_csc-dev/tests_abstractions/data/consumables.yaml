@@ -1,0 +1,15 @@
+%YAML 1.1
+## YAML specifying the consumable for ETCS
+##
+## Author:
+##  R Murali Krishnan
+##
+## Date:
+##  09.22.2023
+## TODO
+## Check if floating point values work for units
+---
+dust_cleaning_liquid:
+  units: 10.0
+  description: >
+    Quarts of cleaning liquid available for dust

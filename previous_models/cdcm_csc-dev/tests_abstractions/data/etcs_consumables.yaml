@@ -1,0 +1,17 @@
+%YAML 1.1
+## YAML specifying the consumable for ETCS
+##
+## Author:
+##  R Murali Krishnan
+##
+## Date:
+##  09.22.2023
+---
+actuator_dust_lru:
+  units: 10
+  description: >
+    A LRU of the ETCS actuator element that is affected by dust 
+self_seal_barrier:
+  units: 100
+  description: >
+    https://technology.nasa.gov/patent/KSC-TOPS-64
