@@ -101,9 +101,15 @@ def make_battery_base(
             if hardware_val > health_th and Q > 0.0:
                 return Q  # simple "available energy" proxy
             return 0.0
+        
+        battery_functionality_inputs = {
+            hardware, 
+            hth_v,
+            chargeordischarge,
+        }
 
         make_functionality(
-            hardware, hth_v, chargeordischarge,
+            *battery_functionality_inputs,
             functionality_func=fn_battery_functionality,
             name="provide_power",
         )

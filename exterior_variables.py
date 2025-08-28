@@ -29,7 +29,6 @@ from cdcm_utils import *
 from cdcm_utils.solar_irradiation import get_insolation_ephemeris
 from cdcm_abstractions import *
 
-import matplotlib.pyplot as plt
 
 # Plot Libraries 
 import matplotlib.pyplot as plt
