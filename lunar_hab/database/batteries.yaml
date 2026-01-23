@@ -1,0 +1,21 @@
+batteries:
+  - name: "Standard 18650 Cell"
+    material: "Lithium-Ion"
+    shape: "Cylinder"
+    dimensions:
+      radius: 0.009
+      height: 0.065
+
+  - name: "Rover Main Battery Pack"
+    material: "LiFePO4"
+    shape: "Box"
+    dimensions:
+      length: 0.5
+      width: 0.3
+      height: 0.1
+
+  - name: "Emergency Reserve Sphere"
+    material: "Nickel-Hydrogen"
+    shape: "Sphere"
+    dimensions:
+      radius: 0.15
