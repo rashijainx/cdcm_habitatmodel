@@ -1,0 +1,12 @@
+Potential Energy
+    Chemical Energy
+    Nuclear Energy
+    Gravitational Energy
+    Elastic Energy
+
+Kinetic Energy
+    Thermal Energy
+    Electrical Energy
+    Radiant / Light Energy
+    Sound Energy
+    Mechanical Energy
