@@ -1,7 +1,8 @@
-from .node import Node
+from .system import System
+from .variable import Variable, Parameter, State
 
 
-class Component(Node):
+class Component(System):
     """
     Descripts any kind of component or collection thereof:
         Physical
@@ -31,5 +32,5 @@ class PhysicalComponent(Component):
 
         self.dimensions = dimensions
         self.shape = shape
-        self.position = position
-        self.material = material
+        self.position = State(name="position", value=position, units="")
+        self.material = Parameter(name="material", value=material, units="")
