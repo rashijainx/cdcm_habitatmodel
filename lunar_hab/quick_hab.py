@@ -1,10 +1,13 @@
+from core.system import System
+from core.factory import create_component
+
 from database.all_database import battery_factory
-from utils.factory import create_component
 
-if __name__ == "__main__":
 
-    rover_battery = create_component(
+with System(name="MoonBase") as mysim:
+    rover_batt = create_component(
         "Rover Main Battery Pack",
+        "rover_batt",
         battery_factory,
         (10, 5, 0)
     )
